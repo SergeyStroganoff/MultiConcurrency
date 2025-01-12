@@ -51,7 +51,7 @@ public class SynchronizationWaitNotify {
             this.buffer = buffer;
         }
 
-        public void consume() {
+        public void consume() throws InterruptedException {
             synchronized (buffer) {
                 if (count == 0) {
                     try {
@@ -62,6 +62,7 @@ public class SynchronizationWaitNotify {
                 }
                 buffer[count--] = 0;
                 System.out.println("Consume " + count);
+                this.sleep(500);
                 buffer.notifyAll();
             }
         }
@@ -69,7 +70,11 @@ public class SynchronizationWaitNotify {
         @Override
         public void run() {
             while (true) {
-                consume();
+                try {
+                    consume();
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
             }
         }
     }

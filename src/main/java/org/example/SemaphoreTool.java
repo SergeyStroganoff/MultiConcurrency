@@ -7,10 +7,11 @@ import java.util.concurrent.Semaphore;
  * В конструктор этого класса (Semaphore(int permits) или Semaphore(int permits, boolean fair))
  * обязательно передается количество потоков, которому семафор будет разрешать одновременно использовать
  * заданный ресурс.
+ * Затем, чтобы получить доступ к ресурсу, поток должен вызвать метод acquire(),
+ * чтобы освободить ресурс - release().
  */
 
 public class SemaphoreTool {
-
     //Парковочное место занято - true, свободно - false
     private static final boolean[] PARKING_PLACES = new boolean[5];
     //Устанавливаем флаг "справедливый", в таком случае метод
@@ -25,7 +26,7 @@ public class SemaphoreTool {
     }
 
     public static class Car implements Runnable {
-        private int carNumber;
+        private final int carNumber;
 
         public Car(int carNumber) {
             this.carNumber = carNumber;
@@ -52,17 +53,18 @@ public class SemaphoreTool {
                             break;
                         }
                 }
-
                 Thread.sleep(5000);       //Уходим за покупками, к примеру
+                // делаем что-то еще на синхронизированных данных
 
                 synchronized (PARKING_PLACES) {
                     PARKING_PLACES[parkingNumber] = false;//Освобождаем место
                 }
 
-                //release(), напротив, освобождает ресурс
-                SEMAPHORE.release();
                 System.out.printf("Автомобиль №%d покинул парковку.\n", carNumber);
             } catch (InterruptedException e) {
+            } finally { //В конце работы парковки освобождаем разрешение в любом случае
+                //release(), напротив, освобождает ресурс
+                SEMAPHORE.release();
             }
         }
     }
