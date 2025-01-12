@@ -1,4 +1,4 @@
-package org.example;
+package org.example.tread;
 
 import static java.lang.Thread.sleep;
 

@@ -1,4 +1,4 @@
-package org.example;
+package org.example.sync_tools;
 
 import java.util.concurrent.Semaphore;
 /**
